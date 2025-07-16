@@ -6,7 +6,7 @@ import { app } from './app.js';
 const port = process.env.PORT || 8000
 
 
-connectDB()
+await connectDB()
 .then(()=>{
     app.listen(port,()=>{
         console.log(`Server running at port: ${port}`);
@@ -14,7 +14,7 @@ connectDB()
 })
 .catch((err)=>{
     console.log('MongoDb Connection failed!!', err);
-    
+    process.exit(1)
 })
 
 // const app = express();
