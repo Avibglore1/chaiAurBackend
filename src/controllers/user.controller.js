@@ -109,8 +109,8 @@ export const logoutUser = asyncHandler(async(req,res)=>{
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set:{
-        refreshToken: undefined
+      $unset:{
+        refreshToken: 1
       }
     },
     {
@@ -142,7 +142,7 @@ export const refreshAccessToken = asyncHandler(async(req,res)=>{
 
   if(incomingRefreshToken!==user.refreshToken) throw new ApiError(401,'Refresh token is expired');
 
-  const {accessToken,newRefreshToken} =await  generateAccessTokenAndRefreshToken(user._id)
+  const {accessToken,refreshToken} =await  generateAccessTokenAndRefreshToken(user._id)
   const options= {
     httpOnly: true,
     secure: true
@@ -150,9 +150,9 @@ export const refreshAccessToken = asyncHandler(async(req,res)=>{
 
   res.status(200)
   .cookie('accessToken', accessToken, options)
-  .cookie('refreshToken', newRefreshToken, options)
+  .cookie('refreshToken', refreshToken, options)
   .json(
-    new ApiResponse(200,{accessToken,newRefreshToken},'Access token refreshed')
+    new ApiResponse(200,{accessToken:accessToken,refreshToken:refreshToken},'Access token refreshed')
   )
 })
 
@@ -350,3 +350,5 @@ export const getWatchHistory = asyncHandler(async(req,res)=>{
   return res.status(200)
   .json(new ApiResponse(200,user[0].watchHistory,'Watch history fetched successfully'))
 })
+
+

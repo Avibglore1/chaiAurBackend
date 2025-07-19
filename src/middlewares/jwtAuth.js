@@ -17,6 +17,7 @@ const verifyJWT = asyncHandler(async(req,_,next)=>{
 
         if(!user) throw new ApiError(401,'Invalid Access Token');
         req.user = user;
+        console.log('middleware auth verification done');
         next()
     } catch (error) {
         throw new ApiError(401,error?.message || 'Invalid Acess Token')
